@@ -1,0 +1,139 @@
+\documentclass[utf8]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[a4paper, left=2cm, right=2cm, top=1.5cm, bottom=2.5cm]{geometry}
+
+
+\title{INFO F-103, Algorithmique\\Rapport projet 2}
+\author{ROCCA Manuel}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+
+\section{Introduction}
+
+Les données et leur analyse possède une place prépondérante dans notre société actuelle. Tout naturellement, nous cherchons à les classer, indexer, etc\dots
+Diverses techniques existent pour arriver à nos fin. C'est pourquoi, dans le cadre de ce projet d'algorithmique, nous nous sommes intéressés aux arbres de 
+décision afin de classer un ensemble de plus de 8000 champignons.\\
+L'arbre de décision implémenté se sert du calcul de l'entropie ainsi que du gain d'information pour déterminer l'impureté d'un ensemble et de le diviser efficacement.
+Il sera représenté à l'aide d'objets 'Node' correspondant aux noeuds d'un arbre ainsi que d'objets 'Edge', représentant les branches de l'arbre.
+De plus, nous allons parcourir cette arbre de diverses manières. Pour l'affichage, nous utiliserons un parcours préfixé exhaustif, tandis que pour vérifier si un 
+champignon est comestible ou non, nous parcourerons l'abre sur base de attributs de ce champignon.\\
+Un ensemble de tests furent également demandés afin de vérifier certains cas imprévus lors de l'analyse d'un ensemble de données quelconques. Ces tests porterons sur la construction 
+de l'arbre, son parcours ainsi que sa transformation en règles booléennes.\\
+
+
+\section{Fonctionnement général}
+Nous allons ici décrire plus précisément comment est implémenté cet arbre. 
+
+\subsection{Construction de l'arbre}
+\label{sec:buildtree}
+L'arbre est construit en se basant sur un pseudo-code donné dans les consignes (cf. consignes), de manière récursive:
+\begin{enumerate}
+    \item Choisir l'attribut A qui sépare au mieux les champignons.
+    \item Créer le noeud associé r.
+    \item Pour chaque valeur possible de cet attribut A:
+        \begin{enumerate}
+            \item Construire le sous-arbre $T_A=v$ sur base des champignons ayant la valeur v pour leur attribut A.
+            \item Ajouter la racine de $T_A=v$ aux enfants de r.
+        \end{enumerate}
+\end{enumerate}
+
+Le point 1 se fait à l'aide de la fonction \emph{get\_info\_gain(attribute\_values: dict, parent\_entropy: int, total\_mushrooms: int) -> int} qui se charge de calculer le gain d'information pour un
+attribut. Le plus grand gain d'information sera ainsi retenu que l'attribut associé. En suivant le pseudo-code donné, nous créons ensuite un premier noeud comportant le premier attribut choisi comme racine de notre arbre.
+Précédemment, la fonction \emph{get\_attribute\_values(attribute: str, mushrooms: list[Mushroom]) -> dict} nous a permis de récuperer, pour valeur de l'attribut choisi, un ensemble de champignons correspondant. Toujours
+en suivant le pseudo-code, nous ferons donc un appel récursif sur chaque sous-ensemble de champignon sur la fonction de construction de l'arbre pour créer des noeuds enfants qu'on ajoutera à la racine à l'aide d'une branche.
+\newline
+
+La formule du gain d'information utilisée est définie par:
+\begin{align*}
+    I(C|A) &= H(C) - \sum_{v} p_A=v \cdot H(C_A=v) \\
+\end{align*}
+
+
+\subsection{Parcours de l'arbre}
+\label{sec:treeparcour}
+Nous allons ici adresser les parcours principaux, à savoir celui de la fonction \emph{is\_edible(root: Node, mushroom: Mushroom) -> bool} et celui de \emph{display(tree: Node, indent = 0) -> None}.
+
+\subsubsection{Fonction: is\_ebible}
+Cette fonction prend l'arbre construit en paramètre ainsi qu'un champignon avec certains attributs quelconques sauf l'attribut edible. Nous cherchons, dans toutes les branches de la racine, laquelle correspond au champignon donné.
+Une fois cette branche trouvée, nous faisons un appel récursif avec comme arbre, le fils de cette branche. Les cas de bases sont si l'attribut de l'arbre sont "Yes" ou "No", à savoir les informations sur la comestibilité du champignon.
+
+\subsubsection{Fonction: display}
+Cette fonction utilise un parcours préfixé, comme expliqué au cours théorique et aux travaux pratiques sur les arbres. Nous affichons donc d'abord la racine avant de parcourir chaque fils, de gauche à droite, récursivement. Le
+cas de base vérifie si l'arbre donné en paramètre est une feuille ou non, à l'aide de la méthode \emph{is\_leaf} de la classe \emph{Node}.
+
+
+\subsection{Autres fonctions}
+
+\subsubsection{Fonction: bool\_tree}
+La fonction \emph{bool\_tree(tree: Node) -> str} transforme l'arbre en un ensemble de règles booléennes sous forme de chaîne de caractères. Nous n'entrerons pas dans ici dans les détails de la construction de la réponse car 
+elle se fait sur base d'un parcours similaire aux deux autres cités ci-dessus.\ref{sec:treeparcour}
+
+\subsubsection{Fonction: to\_python}
+La fonction \emph{to\_python(dt: Node, path: str) -> None} retranscrit l'arbre en un ensemble de conditions de if/else dans un fichier python. L'écriture est faite localement dans la fonction mais l'élément écrit est récupéré via
+la fonction \emph{write\_python(tree : Node, f, indent = 4, ret = '') -> str}. Cette dernière parcourt l'arbre une fois de plus de manière similaire aux fonctions précédemment expliquées.\ref{sec:treeparcour}
+
+
+\section{Complexité}
+
+\subsection{Temporelle}
+La complexité temporelle n'est ici que peu intéressante. Cela est dû au fait que le programme se compose essentiellement de boucles \emph{for} qui vont itérer dans un certain ensemble. Nous soulignons quand même
+les nombreux appels récursifs qui impliquent une complexité temporelle plutôt élevée.
+
+\subsection{Spatiale}
+La complexité spatiale, en revanche, s'avère plutôt intéressante car élevée. Les appels récursifs impliquent évidemment une utilisation importante du stack et le grand nombre d'objets \emph{Mushroom} possédant chacun
+plus de 20 attriubts utilisent une quantité non négligeable de mémoire. De plus, l'arbre est stocké sous forme d'objets \emph{Node} et \emph{Edge} qui augmentent encore la quantité de mémoire requise par ce programme.
+
+\section{Tests personnalisés}
+
+\subsection{Partie 1}
+Les tests de la partie 1 portent sur la construction de l'arbre et du chargement des données à partir du fichier csv. En revanche, ces deux aspects sont déjà évalués dans les tests fournis. C'est pourquoi nos tests
+vérifient d'autres parties plus spécifiques.
+
+\subsubsection{Test: test\_attribute\_values}
+Ce test vérifie le bon fonctionnement de la fonction \emph{get\_attribute\_values(attribute: str, mushrooms: list[Mushroom]) -> dict\hfill\break}, expliquée au point \ref{sec:buildtree} 
+Cette vérification est faite à l'aide d'une fonction \emph{get\_values\_of\_attribute(mushrooms, attribute : str)} qui va récupérer chaque valeur pour un attribut donné sous forme 
+d'une liste de \emph{string} pour les comparer aux clés du dictionnaire donné par \emph{get\_attribute\_values}.
+
+\subsubsection{Test: test\_information\_gain}
+Nous vérifions ici si, pour un ensemble donné, la valeur de gain d'information calculée par la fonction \emph{get\_info\_gain}
+\emph{(attribute\_values: dict, parent\_entropy: int, total\_mushrooms: int) -> int} est correcte.
+Les valeurs auxquelles nous comparons les résultats des appels de fonction sont tout naturellement calculés à la main.
+
+\subsection{Partie 2}
+Les deux tests que nous proposons pour la phase 2 vérifient un parcours de l'arbre interactif ajouté en plus des choses demandées dans les consignes. Nous nous sommes permis d'importer, du module \emph{unittest}, \emph{mock}. Ce sous-module
+permet, grâce à \emph{mock.patch}, de simuler des input lors du test du programme. Nous testons donc simplement la validité d'un chemin. \newline
+Il est tout naturel que nous nous sommes renseignés au sujet de ce module. Voici les sources utilisées:
+\begin{itemize}
+    \item \href{https://docs.python.org/3/library/unittest.mock.html#patch}[Documentation patch]
+    \item \href{https://docs.python.org/3/library/unittest.mock.html#the-mock-class}[Documentation mock]
+\end{itemize}
+
+\subsection{Arbre booléen}
+La dernière série de test se focalise sur l'arbre de décision booléen. Ce dernier étant un \emph{string}, nous avons donc dû nous adapter. Autrement dit, les tests diffèrent des autres.
+
+\subsubsection{Test: test\_right\_attributes\_in\_bool\_tree}
+Ce test va comparer le résultat de deux fonctions, \emph{tree\_attributes\_to\_set(tree, res = [])} et \emph{bool\_string\_to\_set(bool\_tree)}. Les deux fonctions vont retourner un ensemble de toutes les valeurs d'attributs présents
+dans l'arbre classique et l'arbre booléen respectivement.
+
+\subsubsection{Test: test\_bool\_tree\_string}
+Cette fonction nous permet de vérifier de choses simples dans l'arbre booléen. Par exemple, nous vérifions si chaque paranthèse ouvrante possède une paranthèse fermante correspondante, ou encore si un "\emph{Attribut} = \emph{valeur}" recherché
+est bien présent dans le \emph{string}.
+\newline
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{arbrebooléen.png}
+    \caption{L'arbre booléen dans un terminal.}
+    \label{fig:image}
+  \end{figure}
+
+\end{document}
