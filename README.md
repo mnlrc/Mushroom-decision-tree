@@ -4,15 +4,15 @@ Welcome to my first ever algorithmic project. This project implements a decision
 
 ![decisiontree](images/decision-tree.png)
 
-## Project features
+The different features of the project are listed below.
 
-### Algorithm
+## Algorithm
 
-#### Parsing
+### Parsing
 
 The first step is the parsing of data found in the `mushrooms.csv` file. This is handled by the `load_dataset(path: str) -> list[Mushroom]` function. It loads every attribute associated to a mushroom into a Mushroom object.
 
-#### Objects and structure
+### Objects and structure
 
 In addition to functions, this project uses POO for the following elements:
 
@@ -21,7 +21,7 @@ In addition to functions, this project uses POO for the following elements:
  - **Edge:** represents an edge of the decision tree. It contains the parent and child attributs to facilitate navigation through the tree as well as a label attribute.
 
 
-#### Decision tree building
+### Decision tree building
 
 Once the data is loaded, the program builds a decision tree recursively which uses concepts of **entropy** and **information gain** to select the best splitting attribute. 
 
@@ -30,17 +30,17 @@ The **entropy** of a set measures its disorder and randomness. The closer it is 
 The **information gain** measures the reduction of entropy in the child sets if we split based on a selected attribute. The decision tree is built on this basis, choosing the splitting attribute with the highest information gain.
 
 
-### Display and interaction
+## Display and interaction
 
 Once the information is loaded and the tree is build (which shouldn't take more than a second), it will be displayed with it's boolean expression just below.
 
 The user then has access to a small interactive program below the displayed data. It works by entering some attributs of a mushroom to descend into the tree towards the leaves to determine its edibility.
 
-### Tree to python
+## Tree to python
 
 The program also builds a `to_python.py` file where the tree is retranscribed into python code.
 
-### Tests
+## Tests
 
 This project also contains a set of tests created usin the `unitest` module. In general, tests are very handy, especially in an algorithmic project where it can determine if the algorithm has a correct output based on different inputs.
 
