@@ -44,5 +44,9 @@ The program also builds a `to_python.py` file where the tree is retranscribed in
 
 This project also contains a set of tests created usin the `unitest` module. In general, tests are very handy, especially in an algorithmic project where it can determine if the algorithm has a correct output based on different inputs.
 
+## Report
+
+Finally, the project contains a scientific report in french. I wrote it during my first year of bachelor so, looking back to is, it is pretty basic. The good thing is that I can compare it to newer reports I've done (such as the `Belgium Path Finder` or my different AI project reports) and see the improvements ! :sunglasses: 
+
 
 
